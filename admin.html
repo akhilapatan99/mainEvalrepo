@@ -16,12 +16,68 @@
     <main>
         <h1>Admin Panel</h1>
         <form id="addBookForm">
-            <input type="text" id="title" placeholder="Book Title" required/>
-            <input type="text" id="author" placeholder="Author Name" required/>
-            <input type="text" id="year" placeholder="Year" required/>
+            <label>
+                Title: 
+                <input type="text" id="title" required/>
+            </label>
+            <br>
+            <label>
+                Author:
+                <input type="text" id="author" required/>
+            </label>
+            <br>
+            <label>
+                Category:
+                <select id="category" required>
+                    <option value="fiction">Fiction</option>
+                    <option value="technical">Technical</option>
+                    <option value="Com">Comedy</option>
+                </select>
+            </label>
+            <br>
             <button type="submit">Add Book</button>
         </form>
-        <p id="Response"></p>
+
+        <!--Books Display Grid-->
+        <div id="booksGrid" class="grid"></div>
+
+        <script>
+            const form= document.getElementById('addBookForm');
+            const booksGrid = document.getElementById('booksGrid');
+            const API_URL = 'https://yellow-cherry-diver.glitch.me';
+
+            //Fetch and display books
+            const loadBooks = async () => {
+                const response = await fetch(API_URL);
+                const books = await response.json();
+                booksGrid.innerHTML = '';
+
+                books.forEach(book => {
+                    const bookCard = document.createElement('div');
+                    bookCard.className = 'card';
+                    bookCard.innerHTML = `
+                    <h3>${book.title}</h3>
+                    <p><strong>Author:</strong> ${book.author}</p>
+                    <p><strong>Category:</strong>${book.category}</p>
+                    <p><strong>Status:</strong>${book.isVerified? 'Verified' : 'Not Verified'}</p>
+                    ${book.borrowedDays ? '<p><strong>Borrowed Days:</strong> ${book.borrowedDays}</p>' : ''}
+                    <button class= "verifyBtn" ${book.isVerified? 'disabled': ''}>Verify Book</button>
+                    <button class= "deleteBtn">Delete Book</button>
+                    `;
+
+                    //Verify button event
+                    bookCard.querySelector('.verifyBtn').addEventListener('click', async () => {
+                        if (confirm('Are you sure to verify..?')) {
+                            await fetch(`${API_URL}/${book.id}`, {
+                                method: 'PATCH',
+                                headers: {'content-type': 'application/json'},
+                                body: JSON.stringify
+                            })
+                        }
+                    })
+                });
+            }
+        </script>
     </main>
 </body>
 </html>
