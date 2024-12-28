@@ -13,9 +13,74 @@
             <a href="books.html">Books</a>
         </nav>
     </header>
-    <main>
-        <h1>List Of Books</h1>
-        <ul id="listOfBooks"></ul>
-    </main>
+    <script>
+    //Check if the user is logged in
+    const loginData = JSON.parse(localStorage.getItem('loginData'));
+    if(!loginData || loginData.email !== 'user@empher.com') {
+        alert('User Not Logged In');
+        window.location.href = 'index.html';
+    }
+    </script>
+
+    <h1>User Book Page</h1>
+
+    <!--Buttons to toggle book displays-->
+    <div class="button">
+        <button id="showAvailableBooks">Show Available Books</button>
+        <button id="showBorrowedBooks">Show Borrowed Books</button>
+    </div>
+
+    <!--Books Grid-->
+    <div id="booksGrid" class="grid"></div>
+
+    <script>
+        const booksGrid = document.getElementById('booksGrid');
+        const API_URL = 'https://yellow-cherry-diver.glitch.me';
+
+        //Fetch and display books
+        const loadBooks = async (filter = {}) => {
+            let query = '';
+            if(filter.isAvailable !== undefined) {
+                query = `?isAvailable=${filter.isAvailable}`;
+            }
+            const response = await fetch (`${API_URL}${query}`);
+            const books = await response.json();
+            booksGrid.innerHTML = '';
+
+            books.forEach(book => {
+                const bookCard = document.createElement('div');
+                bookCard.className = 'card';
+                bookCard.innerHTML = `
+                    <h3>${book.title}</h3>
+                    <p><strong>Author:</strong> ${book.author}</p>
+                    <p><strong>Category:</strong>${book.category}</p>                    
+                    ${book.borrowedDays ? `<p><strong>Borrowed Days:</strong> ${book.borrowedDays}</p>` : ''}
+                    `;
+
+                    //Add Borrow or Return Button
+                    if (filter.isAvailable) {
+                        const borrowButton = document.createElement('button');
+                        borrowButton.innerHTML = 'Borrow Book';
+                        borrowButton.addEventListener('click', async () => {
+                            const days = parseInt(prompt('Enter the borrowing duration (1-10 days):'));
+                            if(days && days > 0 && days <= 10) {
+                                await fetch (`${API_URL}/${book.id}`, {
+                                    method: 'PATCH',
+                                    headers: {'content-type': 'application/json'},
+                                    body: JSON.stringify({borrowedDays: days, isAvailable: flase})
+                                });
+                                alert('Book Borrowed successfully');
+                                loadBooks({isAvailable: true});
+                            }else {
+                                alert('Invalid duration. Pleasw enter a number between 1 and 10.');
+                            }
+                        });
+                        bookCard.appendChild(borrowButton);
+                    }else {
+                        const returnButton = document.createElement('button');
+                        returnButton.innerHTML = 'Return Book'
+                    }
+        }
+    </script>
 </body>
 </html>
