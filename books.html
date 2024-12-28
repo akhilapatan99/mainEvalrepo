@@ -78,9 +78,30 @@
                         bookCard.appendChild(borrowButton);
                     }else {
                         const returnButton = document.createElement('button');
-                        returnButton.innerHTML = 'Return Book'
+                        returnButton.innerHTML = 'Return Book';
+                        returnButton.addEventListener('click', async() => {
+                            if (confirm('Are you sure to return the book..?')) {
+                                await fetch(`${API_URL}/${book.id}`, {
+                                    method: 'PATCH',
+                                    headers: { 'content-type': 'application/json'},
+                                    body: JSON.stringify({borrowedDays: null, isAvailable: true})
+                                });
+                                alert('Book returned successfully');
+                                loadBooks({ isAvailable: false});
+                            }
+                        });
+                        bookCard.appendChild(returnButton);
                     }
-        }
+                    booksGrid.appendChild(bookCard);
+            });
+        });
+
+        //Event Listeners for Buttons
+        document.getElementById('showAvailableBooks').addEventListener('click', () => loadBooks({ isAvailable: true}));
+        document.getElementById('showBorrowedBooks').addEventListener('click', () => loadBooks({ isAvailable: false}));
+
+        //Initial Load
+        loadBooks({ isAvailable: true});
     </script>
 </body>
 </html>
