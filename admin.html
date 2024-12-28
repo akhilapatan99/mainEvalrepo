@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="admin.html">Admin</a>
+            <a href="books.html">Books</a>
+        </nav>
+    </header>
+    <main>
+        <h1>Admin Panel</h1>
+        <form id="addBookForm">
+            <input type="text" id="title" placeholder="Book Title" required/>
+            <input type="text" id="author" placeholder="Author Name" required/>
+            <input type="text" id="year" placeholder="Year" required/>
+            <button type="submit">Add Book</button>
+        </form>
+        <p id="Response"></p>
+    </main>
+</body>
+</html>
