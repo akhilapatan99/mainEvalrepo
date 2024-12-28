@@ -94,8 +94,7 @@
                     }
                     booksGrid.appendChild(bookCard);
             });
-        });
-
+        };
         //Event Listeners for Buttons
         document.getElementById('showAvailableBooks').addEventListener('click', () => loadBooks({ isAvailable: true}));
         document.getElementById('showBorrowedBooks').addEventListener('click', () => loadBooks({ isAvailable: false}));
